@@ -9,6 +9,11 @@
 #include <vector>
 #include <chrono>
 
+// TODO: Finish the bullet controller
+    // Implement bullet controller inside of player class
+    // Move over render and hit detection to the bullet controller
+    // Modify this file to implement the new bullet controller
+
 void updateScore(sf::Text& scoreLabel, sf::Vector2f windowSize, int nScore);
 void updateAccuracy(sf::Text& accuracyLabel, int bulletsFired, int hitsLanded);
 
@@ -83,7 +88,7 @@ int main()
 
     Enemy enemy = Enemy(ENEMY_HEALTH, enemyTexture);
 
-    std::vector<Player::Bullet> active_bullets;
+    
 
     sf::Clock clock;
 

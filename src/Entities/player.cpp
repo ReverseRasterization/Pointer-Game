@@ -1,9 +1,12 @@
+
+#include <iostream>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <cmath>
 #include "player.h"
 
 
-Player::Player(){
+Player::Player(std::string gunshotSoundPath){
     pointer.setPointCount(3);
     pointer.setPoint(0, {0, -25}); // This is the tip
     pointer.setPoint(1, {25, 25});
@@ -11,6 +14,14 @@ Player::Player(){
     pointer.setFillColor(sf::Color::Green);
     pointer.setOrigin({0,0});
     pointer.setPosition({500, 500});
+
+    sf::SoundBuffer gunshot_buffer;
+    if(!gunshot_buffer.loadFromFile(gunshotSoundPath)){
+        std::cout << "Failed to load gunshot sound on path " << gunshotSoundPath; 
+        return;
+    }
+
+    gunshot = sf::Sound(gunshot_buffer);
 }
 
 void Player::pointTo(sf::Vector2f point)
