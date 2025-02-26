@@ -33,7 +33,6 @@ class Enemy
         void draw(sf::RenderWindow& window);
         bool hit(sf::Vector2f bulletPos);
 
-        std::vector<sf::RectangleShape> getRenderObjects(); // entity, health bar BG, health bar FG
         std::vector<int> getHitBox(); // x left, x right, y top, y bottom
 };
 

@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include "Entities/enemy.h"
+#include "Entities/player.h"
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
@@ -8,19 +9,6 @@
 #include <vector>
 #include <chrono>
 
-// TODO: Add a settings UI that adjusts volume, max enemies, enemies per second, toggles the FPS counter or the accuracy counter, and playing field size
-
-struct Bullet{
-    sf::Vector2f direction;
-
-    float speed = 2000;
-    int base_damage = 15;
-
-    sf::CircleShape bullet = sf::CircleShape(5.0f);
-};
-
-
-Bullet fireBullet(sf::Vector2f mousePos, sf::Vector2f trianglePos);
 void updateScore(sf::Text& scoreLabel, sf::Vector2f windowSize, int nScore);
 void updateAccuracy(sf::Text& accuracyLabel, int bulletsFired, int hitsLanded);
 
@@ -89,20 +77,13 @@ int main()
 
     // Make Triangle
 
-    sf::ConvexShape triangle;
-    triangle.setPointCount(3);
-    triangle.setPoint(0, {0, -25}); // This is the tip
-    triangle.setPoint(1, {25, 25});
-    triangle.setPoint(2, {-25, 25});
-    triangle.setFillColor(sf::Color::Green);
-    triangle.setOrigin({0,0});
-    triangle.setPosition({500, 500});
+    Player pointer = Player();
 
     // Make enemy
 
     Enemy enemy = Enemy(ENEMY_HEALTH, enemyTexture);
 
-    std::vector<Bullet> active_bullets;
+    std::vector<Player::Bullet> active_bullets;
 
     sf::Clock clock;
 
@@ -122,7 +103,7 @@ int main()
 
                 sf::Vector2f nSize = static_cast<sf::Vector2f>(window.getSize());
 
-                triangle.setPosition(nSize/2.f);
+                pointer.adjust(nSize);
                 accuracyLabel.setPosition({10.f, nSize.y-30.f});
                 updateScore(scoreLabel, nSize, score);
                 
@@ -131,16 +112,12 @@ int main()
 
             if (event->is<sf::Event::MouseMoved>()){
                 sf::Vector2f MousePos = static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
-                sf::Vector2f TrianglePos = triangle.getPosition();
-                double dX = (double)MousePos.x - TrianglePos.x;
-                double dY = (double)MousePos.y - TrianglePos.y;
-
-                triangle.setRotation(sf::degrees((atan2(dY, dX)) * (180.0f / 3.14159265359f)+90));
+                pointer.pointTo(MousePos);
                 xhair.setPosition(MousePos);
             }
 
             if(event->is<sf::Event::MouseButtonPressed>()){
-                active_bullets.push_back(fireBullet(static_cast<sf::Vector2f>(sf::Mouse::getPosition(window)), triangle.getPosition()));
+                active_bullets.push_back(pointer.fireBullet(sf::Mouse::getPosition(window)));
                 gunshot.play();
 
                 bulletsFired+=1;
@@ -220,7 +197,7 @@ int main()
         };
 
         enemy.draw(window);
-        window.draw(triangle);
+        pointer.draw(window);
         window.draw(xhair);
         window.draw(scoreLabel);
         window.draw(accuracyLabel);
@@ -229,20 +206,6 @@ int main()
 
 
     return 0;
-}
-
-Bullet fireBullet(sf::Vector2f mousePos, sf::Vector2f trianglePos) {
-    Bullet nBullet;
-    nBullet.direction = sf::Vector2f(mousePos.x - trianglePos.x, mousePos.y - trianglePos.y);
-    nBullet.bullet.setPosition(sf::Vector2f(trianglePos.x-5, trianglePos.y-5));
-
-    float magnitude = std::sqrt(nBullet.direction.x * nBullet.direction.x + nBullet.direction.y * nBullet.direction.y);
-    if (magnitude != 0){
-        nBullet.direction.x /= magnitude;
-        nBullet.direction.y /= magnitude;
-    }
-
-    return nBullet;
 }
 
 void updateScore(sf::Text& scoreLabel, sf::Vector2f windowSize, int nScore){
