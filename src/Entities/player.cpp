@@ -4,9 +4,10 @@
 #include <SFML/Audio.hpp>
 #include <cmath>
 #include "player.h"
+#include "bulletcontroller.h"
 
 
-Player::Player(std::string gunshotSoundPath){
+Player::Player(sf::Sound& gunshotSound):bulletEngine(BulletController()), gunshot(gunshotSound){
     pointer.setPointCount(3);
     pointer.setPoint(0, {0, -25}); // This is the tip
     pointer.setPoint(1, {25, 25});
@@ -15,13 +16,6 @@ Player::Player(std::string gunshotSoundPath){
     pointer.setOrigin({0,0});
     pointer.setPosition({500, 500});
 
-    sf::SoundBuffer gunshot_buffer;
-    if(!gunshot_buffer.loadFromFile(gunshotSoundPath)){
-        std::cout << "Failed to load gunshot sound on path " << gunshotSoundPath; 
-        return;
-    }
-
-    gunshot = sf::Sound(gunshot_buffer);
 }
 
 void Player::pointTo(sf::Vector2f point)
@@ -41,18 +35,7 @@ void Player::draw(sf::RenderWindow& window){
     window.draw(pointer);
 }
 
-Player::Bullet Player::fireBullet(sf::Vector2i target){
-    Bullet nBullet;
-    sf::Vector2f pointerPos = pointer.getPosition();
-
-    nBullet.direction = sf::Vector2f(target.x - pointerPos.x, target.y - pointerPos.y);
-    nBullet.bullet.setPosition(sf::Vector2f(pointerPos.x-5, pointerPos.y-5));
-
-    float magnitude = std::sqrt(nBullet.direction.x * nBullet.direction.x + nBullet.direction.y * nBullet.direction.y);
-    if (magnitude != 0){
-        nBullet.direction.x /= magnitude;
-        nBullet.direction.y /= magnitude;
-    }
-
-    return nBullet;
+void Player::fireBullet(sf::Vector2i target){
+    gunshot.play();
+    bulletEngine.fireBullet(pointer.getPosition(), target);
 }

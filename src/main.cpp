@@ -2,6 +2,7 @@
 #include <SFML/Audio.hpp>
 #include "Entities/enemy.h"
 #include "Entities/player.h"
+#include "Entities/bulletcontroller.h"
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
@@ -9,10 +10,9 @@
 #include <vector>
 #include <chrono>
 
+
 // TODO: Finish the bullet controller
-    // Implement bullet controller inside of player class
     // Move over render and hit detection to the bullet controller
-    // Modify this file to implement the new bullet controller
 
 void updateScore(sf::Text& scoreLabel, sf::Vector2f windowSize, int nScore);
 void updateAccuracy(sf::Text& accuracyLabel, int bulletsFired, int hitsLanded);
@@ -82,7 +82,7 @@ int main()
 
     // Make Triangle
 
-    Player pointer = Player();
+    Player pointer = Player(gunshot);
 
     // Make enemy
 
@@ -122,9 +122,7 @@ int main()
             }
 
             if(event->is<sf::Event::MouseButtonPressed>()){
-                active_bullets.push_back(pointer.fireBullet(sf::Mouse::getPosition(window)));
-                gunshot.play();
-
+                pointer.fireBullet(sf::Mouse::getPosition(window));
                 bulletsFired+=1;
             }
 
@@ -146,60 +144,60 @@ int main()
 
         // Render all bullets & check if it hit an enemy
 
-        for (auto it = active_bullets.begin(); it != active_bullets.end();){
+        // for (auto it = active_bullets.begin(); it != active_bullets.end();){
             
-            float newX = it->bullet.getPosition().x + (it->direction.x * it->speed * dt);
-            float newY = it->bullet.getPosition().y + (it->direction.y * it->speed * dt);
+        //     float newX = it->bullet.getPosition().x + (it->direction.x * it->speed * dt);
+        //     float newY = it->bullet.getPosition().y + (it->direction.y * it->speed * dt);
 
-            it->bullet.setPosition(sf::Vector2f(newX, newY));
+        //     it->bullet.setPosition(sf::Vector2f(newX, newY));
 
-            std::vector<int> enemyBounds = enemy.getHitBox();
+        //     std::vector<int> enemyBounds = enemy.getHitBox();
 
-            if (enemy.hit(sf::Vector2f(newX, newY))){
-                hitsLanded+=1;
+        //     if (enemy.hit(sf::Vector2f(newX, newY))){
+        //         hitsLanded+=1;
 
-                float damage = it->base_damage;
-                float damage_modifier = (static_cast<float>(rand()) / static_cast<float>(RAND_MAX)) * 2.0f;
+        //         float damage = it->base_damage;
+        //         float damage_modifier = (static_cast<float>(rand()) / static_cast<float>(RAND_MAX)) * 2.0f;
 
-                if (damage_modifier < .3){
-                    damage_modifier = .3;
-                }
+        //         if (damage_modifier < .3){
+        //             damage_modifier = .3;
+        //         }
 
-                damage*=damage_modifier;
+        //         damage*=damage_modifier;
 
-                enemy.takeDamage(static_cast<int>(damage), damage_modifier);
+        //         enemy.takeDamage(static_cast<int>(damage), damage_modifier);
 
-                if (damage_modifier >= 1.4) { // Critial hit
-                    score+=4;
-                }else { // Regular hit
-                    score+=1;
-                }
+        //         if (damage_modifier >= 1.4) { // Critial hit
+        //             score+=4;
+        //         }else { // Regular hit
+        //             score+=1;
+        //         }
 
-                if (enemy.getHp() <= 0) {
-                    eDeathSound.play();
-                    enemy = Enemy(ENEMY_HEALTH, enemyTexture);
+        //         if (enemy.getHp() <= 0) {
+        //             eDeathSound.play();
+        //             enemy = Enemy(ENEMY_HEALTH, enemyTexture);
 
-                    score+=15;
-                }else {
-                    hitSound.play();
-                }
+        //             score+=15;
+        //         }else {
+        //             hitSound.play();
+        //         }
 
-                updateScore(scoreLabel, static_cast<sf::Vector2f>(window.getSize()), score);
-                updateAccuracy(accuracyLabel, bulletsFired, hitsLanded);
+        //         updateScore(scoreLabel, static_cast<sf::Vector2f>(window.getSize()), score);
+        //         updateAccuracy(accuracyLabel, bulletsFired, hitsLanded);
                 
-                it = active_bullets.erase(it);
-                break;
-            }
+        //         it = active_bullets.erase(it);
+        //         break;
+        //     }
 
-            if (newX < 0 || newX > window.getSize().x || newY < 0 || newY > window.getSize().y){
-                it = active_bullets.erase(it);
-                updateAccuracy(accuracyLabel, bulletsFired, hitsLanded);
-                break;
-            }else {
-                window.draw(it->bullet);
-                ++it;
-            }
-        };
+        //     if (newX < 0 || newX > window.getSize().x || newY < 0 || newY > window.getSize().y){
+        //         it = active_bullets.erase(it);
+        //         updateAccuracy(accuracyLabel, bulletsFired, hitsLanded);
+        //         break;
+        //     }else {
+        //         window.draw(it->bullet);
+        //         ++it;
+        //     }
+        // };
 
         enemy.draw(window);
         pointer.draw(window);

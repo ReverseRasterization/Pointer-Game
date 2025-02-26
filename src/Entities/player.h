@@ -3,17 +3,20 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include "bulletcontroller.h"
+#include <iostream>
 
 class Player
 {
-    
-
     private:
         sf::ConvexShape pointer;
-        sf::Sound gunshot;
+
+        sf::Sound& gunshot;
+
+        BulletController bulletEngine;
 
     public:
-        Player(std::string gunshotSoundPath);
+        Player(sf::Sound& gunshotSound);
 
         void pointTo(sf::Vector2f point);
         void adjust(sf::Vector2f nSize);

@@ -20,18 +20,9 @@ class BulletController
 
         std::vector<Bullet> active_bullets;
 
-        sf::Sound hitSound;
-
     public:
-        BulletController(std::string hitSoundPath);
-
-        void fire();
-        
-
-
-    
-        
-
+        void fireBullet(sf::Vector2f origin, sf::Vector2i target);
+        void renderBullets(float deltaTime, sf::RenderWindow& window);
 };
 
 #endif
