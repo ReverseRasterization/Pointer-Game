@@ -10,9 +10,6 @@
 #include <chrono>
 
 
-// TODO: Finish the bullet controller
-    // Move over render and hit detection to the bullet controller
-
 void updateScore(sf::Text& scoreLabel, sf::Vector2f windowSize, int nScore);
 void updateAccuracy(sf::Text& accuracyLabel, int bulletsFired, int hitsLanded);
 
