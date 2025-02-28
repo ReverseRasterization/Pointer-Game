@@ -16,7 +16,7 @@ class Player
         struct Bullet{
             sf::Vector2f direction;
         
-            float speed = 200;
+            float speed = 2000;
             int base_damage = 15;
         
             sf::CircleShape bullet = sf::CircleShape(5.0f);

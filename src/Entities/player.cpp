@@ -46,6 +46,7 @@ void Player::draw(sf::RenderWindow& window, float deltaTime){
         window.draw(bulletptr->bullet);
 
         // Check if it hit any enemies
+        bool hit = false;
         for (auto enemy = enemies.begin(); enemy != enemies.end(); ++enemy){
             std::shared_ptr<Enemy> enemyPtr = *enemy;
             
@@ -60,17 +61,23 @@ void Player::draw(sf::RenderWindow& window, float deltaTime){
                 damage*=damage_modifier;
 
                 enemyPtr->takeDamage(static_cast<int>(damage), damage_modifier);
+
+                it = active_bullets.erase(it);
+                hit = true;
+                break;
             }
         }
 
         // Check if the bullet went out of bounds, if so then derender it
-        if (newX < 0 || newX > window.getSize().x || newY < 0 || newY > window.getSize().y){
-            it = active_bullets.erase(it);
-            //updateAccuracy(accuracyLabel, bulletsFired, hitsLanded);
-            break;
-        }else {
-            window.draw(bulletptr->bullet);
-            ++it;
+        if (!hit) {
+            if (newX < 0 || newX > window.getSize().x || newY < 0 || newY > window.getSize().y){
+                it = active_bullets.erase(it);
+                //updateAccuracy(accuracyLabel, bulletsFired, hitsLanded);
+                break;
+            }else {
+                window.draw(bulletptr->bullet);
+                ++it;
+            }
         }
     }
 }

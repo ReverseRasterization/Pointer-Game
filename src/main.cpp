@@ -9,7 +9,6 @@
 #include <vector>
 #include <chrono>
 
-
 void updateScore(sf::Text& scoreLabel, sf::Vector2f windowSize, int nScore);
 void updateAccuracy(sf::Text& accuracyLabel, int bulletsFired, int hitsLanded);
 
