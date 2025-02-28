@@ -1,6 +1,7 @@
 #include "enemy.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <iostream>
 #include <cmath>
 
 float getDistance(int x1, int x2, int y1, int y2);
@@ -63,6 +64,9 @@ void Enemy::draw(sf::RenderWindow& window){
 }
 
 bool Enemy::hit(sf::Vector2f bulletPos){
+
+    std::cout << "\nBullet:\n   X: " << bulletPos.x << "\n  Y: " << bulletPos.y << "\nEnemmy:\n     X_left: " << x_left << "\n     X_right: " << x_right << "\n     Y_top: " << y_top << "\n    Y_bottom: " << y_bottom <<   "\nHit: " << (bulletPos.x > x_left && bulletPos.x < x_right && bulletPos.y > y_top && bulletPos.y < y_bottom);
+
     return bulletPos.x > x_left && bulletPos.x < x_right && bulletPos.y > y_top && bulletPos.y < y_bottom;
 }
 

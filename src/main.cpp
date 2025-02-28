@@ -2,7 +2,6 @@
 #include <SFML/Audio.hpp>
 #include "Entities/enemy.h"
 #include "Entities/player.h"
-#include "Entities/bulletcontroller.h"
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
@@ -81,14 +80,12 @@ int main()
     accuracyLabel.setPosition(sf::Vector2f(10, 970));
 
     // Make Triangle
-
     Player pointer = Player(gunshot);
 
     // Make enemy
-
     Enemy enemy = Enemy(ENEMY_HEALTH, enemyTexture);
 
-    
+    pointer.registerEnemy(std::make_shared<Enemy>(ENEMY_HEALTH, enemyTexture));
 
     sf::Clock clock;
 
@@ -200,7 +197,7 @@ int main()
         // };
 
         enemy.draw(window);
-        pointer.draw(window);
+        pointer.draw(window, dt);
         window.draw(xhair);
         window.draw(scoreLabel);
         window.draw(accuracyLabel);
