@@ -80,9 +80,8 @@ int main()
     Player pointer = Player(gunshot);
 
     // Make enemy
-    Enemy enemy = Enemy(ENEMY_HEALTH, enemyTexture);
-
-    pointer.registerEnemy(std::make_shared<Enemy>(ENEMY_HEALTH, enemyTexture));
+    auto enemy = std::make_shared<Enemy>(ENEMY_HEALTH, enemyTexture);
+    pointer.registerEnemy(enemy);
 
     sf::Clock clock;
 
@@ -122,7 +121,7 @@ int main()
 
             if(event->is<sf::Event::KeyPressed>()){
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)){
-                    enemy = Enemy(ENEMY_HEALTH, enemyTexture);
+                    //enemy = Enemy(ENEMY_HEALTH, enemyTexture); TODO: FIX
                 }
             }
         }
@@ -193,7 +192,7 @@ int main()
         //     }
         // };
 
-        enemy.draw(window);
+        enemy->draw(window);
         pointer.draw(window, dt);
         window.draw(xhair);
         window.draw(scoreLabel);
