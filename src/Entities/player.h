@@ -5,6 +5,7 @@
 #include <SFML/Audio.hpp>
 #include <iostream>
 #include "enemy.h"
+#include "../playerstats.h"
 
 class Player
 {
@@ -25,13 +26,14 @@ class Player
         std::vector<std::shared_ptr<Bullet>> active_bullets;
         std::vector<std::shared_ptr<Enemy>> enemies;
 
+        PlayerStats& playerStats;
+
         // Accuracy
-        int score = 0;
         int bulletsFired = 0;
         int bulletsHit = 0;
 
     public:
-        Player(sf::Sound& gunshotSound);
+        Player(sf::Sound& gunshotSound, PlayerStats& playerStats);
 
         void pointTo(sf::Vector2f point);
         void adjust(sf::Vector2f nSize);
@@ -40,8 +42,6 @@ class Player
         void fireBullet(sf::Vector2i target);
         void registerEnemy(std::shared_ptr<Enemy> nEnemy);
 
-        int getAccuracy(); // returns the accuracy in percentage
-        int getScore();
 };
 
 #endif

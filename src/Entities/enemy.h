@@ -4,36 +4,24 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <iostream>
 
-class Enemy
+#include "entity.h"
+
+class Enemy: public Entity
 {
     private:
-        sf::Font font;
-
-        int hp;
-        int maxHp;
         int speed = 10;
 
-        // Some hitbox data, the rectangles getPosition function is at the top left corner of the rectangle
-        int y_top;
-        int y_bottom;
-        int x_left;
-        int x_right;
-
         sf::RectangleShape entity = sf::RectangleShape({96.f, 80.f});
-        sf::RectangleShape healthBarBG = sf::RectangleShape({96.f, 10});
-        sf::RectangleShape healthBarFG = sf::RectangleShape({96.f, 10});
 
     public:
-        Enemy(int health, sf::Texture& enemyTexture);
+        Enemy(sf::Texture& enemyTexture);
 
-        int getHp();
-        void takeDamage(int damage, float damage_modifier);
-        void summon();
         void draw(sf::RenderWindow& window);
-        bool hit(sf::Vector2f bulletPos);
 
-        std::vector<int> getHitBox(); // x left, x right, y top, y bottom
+        
+        void kill();
 };
 
 #endif

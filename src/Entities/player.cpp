@@ -5,8 +5,9 @@
 #include <cmath>
 #include "player.h"
 #include "enemy.h"
+#include "../playerstats.h"
 
-Player::Player(sf::Sound& gunshotSound): gunshot(gunshotSound){
+Player::Player(sf::Sound& gunshotSound, PlayerStats& player_stats): gunshot(gunshotSound), playerStats(player_stats) {
     pointer.setPointCount(3);
     pointer.setPoint(0, {0, -25}); // This is the tip
     pointer.setPoint(1, {25, 25});
@@ -50,7 +51,7 @@ void Player::draw(sf::RenderWindow& window, float deltaTime){
         for (auto enemy = enemies.begin(); enemy != enemies.end(); ++enemy){
             std::shared_ptr<Enemy> enemyPtr = *enemy;
             
-            if (enemyPtr->hit(sf::Vector2f(newX, newY))){
+            if (enemyPtr->hit(newX, newY)){
                 float damage = bulletptr->base_damage;
                 float damage_modifier = (static_cast<float>(rand()) / static_cast<float>(RAND_MAX)) * 2.0f;
 
@@ -60,17 +61,20 @@ void Player::draw(sf::RenderWindow& window, float deltaTime){
 
                 damage*=damage_modifier;
 
-                enemyPtr->takeDamage(static_cast<int>(damage), damage_modifier);
+                enemyPtr->takeDamage(static_cast<int>(damage));
 
                 if (damage_modifier >= 1.4) { // Critial hit
-                    score+=4;
+                    playerStats.changeScore(4);
                 }else { // Regular hit
-                    score+=1;
+                    playerStats.changeScore(1);
                 }
 
                 it = active_bullets.erase(it);
                 hit = true;
                 bulletsHit+=1;
+
+                playerStats.setAccuracy(bulletsFired, bulletsHit);
+                
                 break;
             }
         }
@@ -79,7 +83,7 @@ void Player::draw(sf::RenderWindow& window, float deltaTime){
         if (!hit) {
             if (newX < 0 || newX > window.getSize().x || newY < 0 || newY > window.getSize().y){
                 it = active_bullets.erase(it);
-                //updateAccuracy(accuracyLabel, bulletsFired, hitsLanded);
+                playerStats.setAccuracy(bulletsFired, bulletsHit);
                 break;
             }else {
                 window.draw(bulletptr->bullet);
@@ -111,13 +115,4 @@ void Player::fireBullet(sf::Vector2i target){
 
 void Player::registerEnemy(std::shared_ptr<Enemy> nEnemy){
     enemies.push_back(nEnemy);
-}
-
-int Player::getAccuracy(){
-    if (bulletsFired == 0) {return 0.f;}
-    return static_cast<int>((bulletsHit/bulletsFired)*100.f);
-}
-
-int Player::getScore(){
-    return score;
 }

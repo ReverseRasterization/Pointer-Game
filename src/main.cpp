@@ -1,15 +1,17 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include "Entities/entity.h"
 #include "Entities/enemy.h"
 #include "Entities/player.h"
+#include "playerstats.h"
 #include <iostream>
+#include <memory>
 #include <ctime>
 #include <cstdlib>
 #include <cmath>
 #include <vector>
 #include <chrono>
 
-void updateScore(sf::Text& scoreLabel, sf::Vector2f windowSize, int nScore);
 
 int main()
 {
@@ -25,14 +27,13 @@ int main()
     if(!xhairTexture.loadFromFile("assets/Textures/xhair.png")){
         return -1;
     }
+    if (!enemyTexture.loadFromFile("assets/Textures/enemy.png")){
+        return -1;
+    }
 
     sf::RectangleShape xhair({75.f, 75.f});
     xhair.setTexture(&xhairTexture);
     xhair.setOrigin({37.5f,37.5f});
-
-    if (!enemyTexture.loadFromFile("assets/Textures/enemy.png")){
-        return -1;
-    }
 
     // Load sounds
 
@@ -58,23 +59,16 @@ int main()
     sf::RenderWindow window(sf::VideoMode({1000,1000}), "Mouse Pointer");
     window.setMouseCursorVisible(false);
 
-    // Make Triangle
-
-    Player pointer = Player(gunshot);
-
     // Make score & accuracy counter
 
-    sf::Text scoreLabel(font);
-    scoreLabel.setCharacterSize(48);
-    scoreLabel.setFillColor(sf::Color::White);
+    PlayerStats playerStats = PlayerStats(font, static_cast<sf::Vector2f>(window.getSize()));
 
-    sf::Text accuracyLabel(font);
-    accuracyLabel.setCharacterSize(24);
-    accuracyLabel.setFillColor(sf::Color::White);
-    accuracyLabel.setPosition(sf::Vector2f(10, 970));
+    // Make Triangle
+
+    Player pointer = Player(gunshot, playerStats);
 
     // Make enemy
-    auto enemy = std::make_shared<Enemy>(ENEMY_HEALTH, enemyTexture);
+    auto enemy = std::make_shared<Enemy>(enemyTexture);
     pointer.registerEnemy(enemy);
 
     sf::Clock clock;
@@ -96,8 +90,7 @@ int main()
                 sf::Vector2f nSize = static_cast<sf::Vector2f>(window.getSize());
 
                 pointer.adjust(nSize);
-                accuracyLabel.setPosition({10.f, nSize.y-30.f});
-                updateScore(scoreLabel, nSize, pointer.getScore());
+                playerStats.adjustToWindowSize(nSize);
                 
                 window.setView(sf::View(sf::FloatRect({0.f, 0.f}, nSize)));
             }
@@ -186,24 +179,13 @@ int main()
         //     }
         // };
 
-        updateScore(scoreLabel, static_cast<sf::Vector2f>(window.getSize()), pointer.getScore());
-        accuracyLabel.setString("Accuracy: " + pointer.getAccuracy() + '%');
-
         enemy->draw(window);
         pointer.draw(window, dt);
         window.draw(xhair);
-        window.draw(scoreLabel);
-        window.draw(accuracyLabel);
+        playerStats.draw(window);
         window.display();
     }
 
 
     return 0;
-}
-
-void updateScore(sf::Text& scoreLabel, sf::Vector2f windowSize, int nScore){
-    scoreLabel.setString("Score: " + std::to_string(nScore));
-
-    scoreLabel.setOrigin(scoreLabel.getLocalBounds().getCenter());
-    scoreLabel.setPosition({windowSize.x/2.f,30});
 }
