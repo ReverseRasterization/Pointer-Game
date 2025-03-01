@@ -10,17 +10,12 @@
 #include <chrono>
 
 void updateScore(sf::Text& scoreLabel, sf::Vector2f windowSize, int nScore);
-void updateAccuracy(sf::Text& accuracyLabel, int bulletsFired, int hitsLanded);
 
 int main()
 {
     srand(time(NULL));
 
     int ENEMY_HEALTH = 100;
-
-    int score = 0;
-    int bulletsFired = 0;
-    int hitsLanded = 0;
     
     // Load & apply textures
 
@@ -63,20 +58,20 @@ int main()
     sf::RenderWindow window(sf::VideoMode({1000,1000}), "Mouse Pointer");
     window.setMouseCursorVisible(false);
 
+    // Make Triangle
+
+    Player pointer = Player(gunshot);
+
     // Make score & accuracy counter
 
     sf::Text scoreLabel(font);
     scoreLabel.setCharacterSize(48);
     scoreLabel.setFillColor(sf::Color::White);
-    updateScore(scoreLabel, static_cast<sf::Vector2f>(window.getSize()), score);
 
     sf::Text accuracyLabel(font);
     accuracyLabel.setCharacterSize(24);
     accuracyLabel.setFillColor(sf::Color::White);
     accuracyLabel.setPosition(sf::Vector2f(10, 970));
-
-    // Make Triangle
-    Player pointer = Player(gunshot);
 
     // Make enemy
     auto enemy = std::make_shared<Enemy>(ENEMY_HEALTH, enemyTexture);
@@ -102,7 +97,7 @@ int main()
 
                 pointer.adjust(nSize);
                 accuracyLabel.setPosition({10.f, nSize.y-30.f});
-                updateScore(scoreLabel, nSize, score);
+                updateScore(scoreLabel, nSize, pointer.getScore());
                 
                 window.setView(sf::View(sf::FloatRect({0.f, 0.f}, nSize)));
             }
@@ -115,7 +110,7 @@ int main()
 
             if(event->is<sf::Event::MouseButtonPressed>()){
                 pointer.fireBullet(sf::Mouse::getPosition(window));
-                bulletsFired+=1;
+                
             }
 
             if(event->is<sf::Event::KeyPressed>()){
@@ -191,6 +186,9 @@ int main()
         //     }
         // };
 
+        updateScore(scoreLabel, static_cast<sf::Vector2f>(window.getSize()), pointer.getScore());
+        accuracyLabel.setString("Accuracy: " + pointer.getAccuracy() + '%');
+
         enemy->draw(window);
         pointer.draw(window, dt);
         window.draw(xhair);
@@ -208,10 +206,4 @@ void updateScore(sf::Text& scoreLabel, sf::Vector2f windowSize, int nScore){
 
     scoreLabel.setOrigin(scoreLabel.getLocalBounds().getCenter());
     scoreLabel.setPosition({windowSize.x/2.f,30});
-}
-
-void updateAccuracy(sf::Text& accuracyLabel, int bulletsFired, int hitsLanded) {
-    if (bulletsFired != 0 && hitsLanded != 0) {
-        accuracyLabel.setString("Accuracy: " + std::to_string(static_cast<int>((static_cast<float>(hitsLanded)/static_cast<float>(bulletsFired))*100)) + '%');
-    }
 }

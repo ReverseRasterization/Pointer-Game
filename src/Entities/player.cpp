@@ -62,8 +62,15 @@ void Player::draw(sf::RenderWindow& window, float deltaTime){
 
                 enemyPtr->takeDamage(static_cast<int>(damage), damage_modifier);
 
+                if (damage_modifier >= 1.4) { // Critial hit
+                    score+=4;
+                }else { // Regular hit
+                    score+=1;
+                }
+
                 it = active_bullets.erase(it);
                 hit = true;
+                bulletsHit+=1;
                 break;
             }
         }
@@ -98,8 +105,19 @@ void Player::fireBullet(sf::Vector2i target){
     }
 
     active_bullets.push_back(nBullet);
+
+    bulletsFired+=1;
 }
 
 void Player::registerEnemy(std::shared_ptr<Enemy> nEnemy){
     enemies.push_back(nEnemy);
+}
+
+int Player::getAccuracy(){
+    if (bulletsFired == 0) {return 0.f;}
+    return static_cast<int>((bulletsHit/bulletsFired)*100.f);
+}
+
+int Player::getScore(){
+    return score;
 }

@@ -25,6 +25,11 @@ class Player
         std::vector<std::shared_ptr<Bullet>> active_bullets;
         std::vector<std::shared_ptr<Enemy>> enemies;
 
+        // Accuracy
+        int score = 0;
+        int bulletsFired = 0;
+        int bulletsHit = 0;
+
     public:
         Player(sf::Sound& gunshotSound);
 
@@ -34,6 +39,9 @@ class Player
 
         void fireBullet(sf::Vector2i target);
         void registerEnemy(std::shared_ptr<Enemy> nEnemy);
+
+        int getAccuracy(); // returns the accuracy in percentage
+        int getScore();
 };
 
 #endif

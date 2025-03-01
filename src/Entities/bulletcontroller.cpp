@@ -30,11 +30,7 @@ void BulletController::renderBullets(float deltaTime, sf::RenderWindow& window){
 
         //     enemy.takeDamage(static_cast<int>(damage), damage_modifier);
 
-        //     if (damage_modifier >= 1.4) { // Critial hit
-        //         score+=4;
-        //     }else { // Regular hit
-        //         score+=1;
-        //     }
+        //     
 
         //     if (enemy.getHp() <= 0) {
         //         eDeathSound.play();
