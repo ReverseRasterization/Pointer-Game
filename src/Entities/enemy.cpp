@@ -14,7 +14,7 @@ float getDistance(int x1, int x2, int y1, int y2){ // utilizes c^2 = a^2 + b^2 t
     return sqrt((a*a)+(b*b));
 }
 
-Enemy::Enemy(sf::Texture& enemyTexture): Entity(100, 100, true)
+Enemy::Enemy(sf::Texture& enemyTexture): Entity(100, 100, true, "assets/Sounds/enemydied.wav", "assets/Sounds/hit.wav")
 {
     sf::Vector2f position(500, 500);
 
@@ -31,10 +31,12 @@ Enemy::Enemy(sf::Texture& enemyTexture): Entity(100, 100, true)
     setHitBox(position.x, position.x + 128, position.y, position.y + 107);
 
     entity.setTexture(&enemyTexture);
+
 }
 
-
 void Enemy::draw(sf::RenderWindow& window){
+    if (getHealth() == 0){return;}
+
     window.draw(entity);
 
     auto healthBar = getHealthBar();

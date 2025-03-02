@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
@@ -7,7 +6,7 @@
 #include "enemy.h"
 #include "../playerstats.h"
 
-Player::Player(sf::Sound& gunshotSound, PlayerStats& player_stats): gunshot(gunshotSound), playerStats(player_stats) {
+Player::Player(PlayerStats& player_stats, std::vector<std::shared_ptr<Entity>>& entity_list): playerStats(player_stats), entityList(entity_list) {
     pointer.setPointCount(3);
     pointer.setPoint(0, {0, -25}); // This is the tip
     pointer.setPoint(1, {25, 25});
@@ -15,6 +14,15 @@ Player::Player(sf::Sound& gunshotSound, PlayerStats& player_stats): gunshot(guns
     pointer.setFillColor(sf::Color::Green);
     pointer.setOrigin({0,0});
     pointer.setPosition({500, 500});
+
+    if(!gunshot_buffer.loadFromFile("assets/Sounds/gunshot.wav")) {
+        std::cerr << "Failed to load gunshot sound";
+        return;
+    }
+
+    sf::Sound nGunshot(gunshot_buffer);
+
+    gunshot = std::make_shared<sf::Sound>(sf::Sound(nGunshot));
 }
 
 void Player::pointTo(sf::Vector2f point)
@@ -48,8 +56,8 @@ void Player::draw(sf::RenderWindow& window, float deltaTime){
 
         // Check if it hit any enemies
         bool hit = false;
-        for (auto enemy = enemies.begin(); enemy != enemies.end(); ++enemy){
-            std::shared_ptr<Enemy> enemyPtr = *enemy;
+        for (auto enemy = entityList.begin(); enemy != entityList.end(); ++enemy){
+            std::shared_ptr<Entity> enemyPtr = *enemy;
             
             if (enemyPtr->hit(newX, newY)){
                 float damage = bulletptr->base_damage;
@@ -94,7 +102,7 @@ void Player::draw(sf::RenderWindow& window, float deltaTime){
 }
 
 void Player::fireBullet(sf::Vector2i target){
-    gunshot.play();
+    gunshot->play();
 
     auto nBullet = std::make_shared<Bullet>();
     sf::Vector2f origin = pointer.getPosition();
@@ -111,8 +119,4 @@ void Player::fireBullet(sf::Vector2i target){
     active_bullets.push_back(nBullet);
 
     bulletsFired+=1;
-}
-
-void Player::registerEnemy(std::shared_ptr<Enemy> nEnemy){
-    enemies.push_back(nEnemy);
 }

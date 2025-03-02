@@ -16,8 +16,6 @@
 int main()
 {
     srand(time(NULL));
-
-    int ENEMY_HEALTH = 100;
     
     // Load & apply textures
 
@@ -34,18 +32,6 @@ int main()
     sf::RectangleShape xhair({75.f, 75.f});
     xhair.setTexture(&xhairTexture);
     xhair.setOrigin({37.5f,37.5f});
-
-    // Load sounds
-
-    sf::SoundBuffer gunshot_buffer;
-    sf::SoundBuffer hit_buffer;
-    sf::SoundBuffer enemy_death_buffer;
-    if (!gunshot_buffer.loadFromFile("assets/Sounds/gunshot.wav") || !hit_buffer.loadFromFile("assets/Sounds/hit.wav") || !enemy_death_buffer.loadFromFile("assets/Sounds/enemydied.wav"))
-        return -1;
-
-    sf::Sound gunshot (gunshot_buffer);
-    sf::Sound hitSound(hit_buffer);
-    sf::Sound eDeathSound(enemy_death_buffer);
 
     // Load Fonts
     sf::Font font;
@@ -64,12 +50,13 @@ int main()
     PlayerStats playerStats = PlayerStats(font, static_cast<sf::Vector2f>(window.getSize()));
 
     // Make Triangle
+    std::vector<std::shared_ptr<Entity>> entities;
 
-    Player pointer = Player(gunshot, playerStats);
+    Player pointer = Player(playerStats, entities);
 
     // Make enemy
     auto enemy = std::make_shared<Enemy>(enemyTexture);
-    pointer.registerEnemy(enemy);
+    entities.push_back(enemy);
 
     sf::Clock clock;
 
@@ -108,7 +95,7 @@ int main()
 
             if(event->is<sf::Event::KeyPressed>()){
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)){
-                    //enemy = Enemy(ENEMY_HEALTH, enemyTexture); TODO: FIX
+                    entities.push_back(std::make_shared<Enemy>(enemyTexture));
                 }
             }
         }
@@ -122,64 +109,11 @@ int main()
 
         window.clear();
 
-        // Render all bullets & check if it hit an enemy
-
-        // for (auto it = active_bullets.begin(); it != active_bullets.end();){
-            
-        //     float newX = it->bullet.getPosition().x + (it->direction.x * it->speed * dt);
-        //     float newY = it->bullet.getPosition().y + (it->direction.y * it->speed * dt);
-
-        //     it->bullet.setPosition(sf::Vector2f(newX, newY));
-
-        //     std::vector<int> enemyBounds = enemy.getHitBox();
-
-        //     if (enemy.hit(sf::Vector2f(newX, newY))){
-        //         hitsLanded+=1;
-
-        //         float damage = it->base_damage;
-        //         float damage_modifier = (static_cast<float>(rand()) / static_cast<float>(RAND_MAX)) * 2.0f;
-
-        //         if (damage_modifier < .3){
-        //             damage_modifier = .3;
-        //         }
-
-        //         damage*=damage_modifier;
-
-        //         enemy.takeDamage(static_cast<int>(damage), damage_modifier);
-
-        //         if (damage_modifier >= 1.4) { // Critial hit
-        //             score+=4;
-        //         }else { // Regular hit
-        //             score+=1;
-        //         }
-
-        //         if (enemy.getHp() <= 0) {
-        //             eDeathSound.play();
-        //             enemy = Enemy(ENEMY_HEALTH, enemyTexture);
-
-        //             score+=15;
-        //         }else {
-        //             hitSound.play();
-        //         }
-
-        //         updateScore(scoreLabel, static_cast<sf::Vector2f>(window.getSize()), score);
-        //         updateAccuracy(accuracyLabel, bulletsFired, hitsLanded);
-                
-        //         it = active_bullets.erase(it);
-        //         break;
-        //     }
-
-        //     if (newX < 0 || newX > window.getSize().x || newY < 0 || newY > window.getSize().y){
-        //         it = active_bullets.erase(it);
-        //         updateAccuracy(accuracyLabel, bulletsFired, hitsLanded);
-        //         break;
-        //     }else {
-        //         window.draw(it->bullet);
-        //         ++it;
-        //     }
-        // };
-
-        enemy->draw(window);
+        for (const auto& entity : entities){
+            entity->draw(window);
+        }
+        
+        //enemy->draw(window);
         pointer.draw(window, dt);
         window.draw(xhair);
         playerStats.draw(window);

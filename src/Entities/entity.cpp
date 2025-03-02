@@ -1,7 +1,32 @@
 #include "entity.h"
+#include <SFML/Audio.hpp>
 #include <vector>
+#include <memory>
+#include <iostream>
 
-Entity::Entity(int hp, int max_hp, bool show_health_bar): hp(hp), maxhp(max_hp), showHealthBar(show_health_bar) {}
+Entity::Entity(int hp, int max_hp, bool show_health_bar, std::string death_sound_directory, std::string hit_sound_directory): hp(hp), maxhp(max_hp), showHealthBar(show_health_bar) {
+    if(!death_sound_directory.empty()){
+        if(!deathSound_buffer.loadFromFile(death_sound_directory)) {
+            std::cerr << "Failed to load death sound";
+            return;
+        }
+
+        sf::Sound nDeathSound(deathSound_buffer);
+
+        deathSound = std::make_shared<sf::Sound>(nDeathSound);
+    }
+
+    if(!hit_sound_directory.empty()){
+        if(!hitSound_buffer.loadFromFile(hit_sound_directory)) {
+            std::cerr << "Failed to load hit sound";
+            return;
+        }
+
+        sf::Sound nHitSound(hitSound_buffer);
+
+        hitSound = std::make_shared<sf::Sound>(nHitSound);
+    }
+}
 
 void Entity::updateHealthBar() {
     if (showHealthBar) {
@@ -10,7 +35,7 @@ void Entity::updateHealthBar() {
 }
 
 std::vector<int> Entity::getHitBox() {
-    return std::vector<int>{xLeft, xRight, yTop, yBottom};
+    return std::vector<int>{xLeft, xRight, yTop, yBottom}; 
 }
 
 void Entity::setHitBox(int x_left, int x_right, int y_top, int y_bottom){
@@ -20,11 +45,19 @@ void Entity::setHitBox(int x_left, int x_right, int y_top, int y_bottom){
     yBottom = y_bottom;
 }
 
+int Entity::getHealth(){
+    return hp;
+}
+
 void Entity::takeDamage(int damage) {
     hp-=damage;
 
     if(hp <= 0){
         hp = 0;
+
+        if (deathSound){
+            deathSound->play();
+        }
     }
 
     updateHealthBar();
@@ -77,7 +110,14 @@ std::vector<std::shared_ptr<sf::RectangleShape>> Entity::getHealthBar() {
 }
 
 bool Entity::hit(int target_x, int target_y){
-    return target_x > xLeft && target_x < xRight && target_y > yTop && target_y < yBottom;
+    if (getHealth() == 0) {return false;};
+
+    bool hit = target_x > xLeft && target_x < xRight && target_y > yTop && target_y < yBottom;
+
+    if (hitSound && getHealth() > 0) {
+        hitSound->play();
+    }
+    return hit;
 }
 
 

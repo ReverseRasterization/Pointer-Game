@@ -26,6 +26,12 @@ class Entity {
         std::shared_ptr<sf::RectangleShape> healthBarBG;
         std::shared_ptr<sf::RectangleShape> healthBarFG;
 
+        std::shared_ptr<sf::Sound> deathSound;
+        sf::SoundBuffer deathSound_buffer;
+
+        std::shared_ptr<sf::Sound> hitSound;
+        sf::SoundBuffer hitSound_buffer;
+
         bool showHealthBar = true;
 
     public:
@@ -34,6 +40,7 @@ class Entity {
         void setHitBox(int x_left, int x_right, int y_top, int y_bottom);
         std::vector<int> getHitBox(); // x left, x right, y top, y bottom
 
+        int getHealth();
         void takeDamage(int damage);
         void heal(int factor); // if the factor is <0, that means the entities health will be fully replenished
 
@@ -47,5 +54,7 @@ class Entity {
 
         bool hit (int target_x, int target_y);
 
-        Entity(int hp, int max_hp, bool show_health_bar);
+        virtual void draw(sf::RenderWindow& window) = 0;
+
+        Entity(int hp, int max_hp, bool show_health_bar, std::string death_sound_directory, std::string hit_sound_directory);
 };

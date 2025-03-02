@@ -4,7 +4,10 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <iostream>
+#include <memory>
+#include <vector>
 #include "enemy.h"
+#include "entity.h"
 #include "../playerstats.h"
 
 class Player
@@ -12,7 +15,8 @@ class Player
     private:
         sf::ConvexShape pointer;
 
-        sf::Sound& gunshot;
+        std::shared_ptr<sf::Sound> gunshot;
+        sf::SoundBuffer gunshot_buffer;
 
         struct Bullet{
             sf::Vector2f direction;
@@ -24,23 +28,23 @@ class Player
         };
 
         std::vector<std::shared_ptr<Bullet>> active_bullets;
-        std::vector<std::shared_ptr<Enemy>> enemies;
+        std::vector<std::shared_ptr<Entity>>& entityList; 
 
         PlayerStats& playerStats;
+        
 
         // Accuracy
         int bulletsFired = 0;
         int bulletsHit = 0;
 
     public:
-        Player(sf::Sound& gunshotSound, PlayerStats& playerStats);
+        Player(PlayerStats& playerStats, std::vector<std::shared_ptr<Entity>>& entity_list);
 
         void pointTo(sf::Vector2f point);
         void adjust(sf::Vector2f nSize);
         void draw(sf::RenderWindow& window, float deltaTime);
 
         void fireBullet(sf::Vector2i target);
-        void registerEnemy(std::shared_ptr<Enemy> nEnemy);
 
 };
 
