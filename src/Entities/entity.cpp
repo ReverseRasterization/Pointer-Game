@@ -114,7 +114,8 @@ bool Entity::hit(int target_x, int target_y){
 
     bool hit = target_x > xLeft && target_x < xRight && target_y > yTop && target_y < yBottom;
 
-    if (hitSound && getHealth() > 0) {
+    if (hitSound && getHealth() > 0 && hit) {
+        std::cout << "\nPlaying hit sound!";
         hitSound->play();
     }
     return hit;

@@ -14,15 +14,21 @@ float getDistance(int x1, int x2, int y1, int y2){ // utilizes c^2 = a^2 + b^2 t
     return sqrt((a*a)+(b*b));
 }
 
-Enemy::Enemy(sf::Texture& enemyTexture): Entity(100, 100, true, "assets/Sounds/enemydied.wav", "assets/Sounds/hit.wav")
-{
+sf::Vector2f choosePosition(int x_min, int x_max, int y_min, int y_max, sf::Vector2f playerPosition, int distance_from_player) {
     sf::Vector2f position(500, 500);
 
-    while (getDistance(500, position.x, 500, position.y) < 200)
+    while (getDistance(500, position.x, 500, position.y) < distance_from_player)
     {
-        position = sf::Vector2f(rand()%800, 100 + rand()%700);
+        position = sf::Vector2f(x_min + rand()%x_max, y_min + rand()%y_max);
     }
 
+    return position;
+}
+
+Enemy::Enemy(sf::Texture& enemyTexture, sf::Vector2i x_bounds, sf::Vector2i y_bounds): Entity(100, 100, true, "assets/Sounds/enemydied.wav", "assets/Sounds/hit.wav")
+{
+    
+    sf::Vector2f position = choosePosition(x_bounds.x, x_bounds.y, y_bounds.x, y_bounds.y, {500, 500}, 200);
     constructHealthBar({96.f, 10.f}, {position.x, position.y-30.f});
 
     entity.setPosition(position);

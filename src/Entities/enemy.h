@@ -17,7 +17,7 @@ class Enemy: public Entity
 
         
     public:
-        Enemy(sf::Texture& enemyTexture);
+        Enemy(sf::Texture& enemyTexture, sf::Vector2i x_bounds, sf::Vector2i y_bounds);
 
         void draw(sf::RenderWindow& window) override;
 

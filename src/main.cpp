@@ -55,8 +55,8 @@ int main()
     Player pointer = Player(playerStats, entities);
 
     // Make enemy
-    auto enemy = std::make_shared<Enemy>(enemyTexture);
-    entities.push_back(enemy);
+    Enemy nEnemy = Enemy(enemyTexture, sf::Vector2i(50, 850), sf::Vector2i(100, 900));
+    //entities.push_back(enemy);
 
     sf::Clock clock;
 
@@ -110,7 +110,9 @@ int main()
         window.clear();
 
         for (const auto& entity : entities){
-            entity->draw(window);
+            if (entity) {
+                entity->draw(window);
+            }
         }
         
         //enemy->draw(window);
