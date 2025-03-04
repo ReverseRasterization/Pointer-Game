@@ -44,7 +44,7 @@ void Player::draw(sf::RenderWindow& window, float deltaTime){
     window.draw(pointer);
 
     // Get the entities
-    std::vector<std::shared_ptr<Entity>> entityList = em.getEntities();
+    std::vector<std::shared_ptr<Enemy>> entityList = em.getEntities();
 
     // Draw all the bullets
     for (auto it = active_bullets.begin(); it != active_bullets.end();){
@@ -59,7 +59,7 @@ void Player::draw(sf::RenderWindow& window, float deltaTime){
         // Check if it hit any enemies
         bool hit = false;
         for (auto enemy = entityList.begin(); enemy != entityList.end(); ++enemy){
-            std::shared_ptr<Entity> enemyPtr = *enemy;
+            std::shared_ptr<Enemy> enemyPtr = *enemy;
             
             if (enemyPtr->hit(newX, newY)){
                 float damage = bulletptr->base_damage;

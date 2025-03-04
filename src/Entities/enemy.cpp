@@ -1,5 +1,4 @@
 #include "enemy.h"
-#include "entity.h"
 #include "../entitymanager.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
@@ -27,29 +26,93 @@ sf::Vector2f choosePosition(int x_min, int x_max, int y_min, int y_max, sf::Vect
     return position;
 }
 
-Enemy::Enemy(sf::Texture& enemyTexture, sf::Vector2i x_bounds, sf::Vector2i y_bounds, EntityManager& em): Entity(100, 100, true, "assets/Sounds/enemydied.wav", "assets/Sounds/hit.wav", em)
+Enemy::Enemy(sf::Texture& enemyTexture, sf::Vector2i x_bounds, sf::Vector2i y_bounds, std::string death_sound_directory, std::string hit_sound_directory, EntityManager& em): em(em)
 {
+
+    if(!death_sound_directory.empty()){
+        if(!deathSound_buffer->loadFromFile(death_sound_directory)) {
+            std::cerr << "Failed to load death sound";
+            return;
+        }
+
+        deathSound = std::make_shared<sf::Sound>(*deathSound_buffer);
+    }
+
+    if(!hit_sound_directory.empty()){
+        if(!hitSound_buffer->loadFromFile(hit_sound_directory)) {
+            std::cerr << "Failed to load hit sound";
+            return;
+        }
+
+        hitSound = std::make_shared<sf::Sound>(*hitSound_buffer);
+    }
     
     sf::Vector2f position = choosePosition(x_bounds.x, x_bounds.y, y_bounds.x, y_bounds.y, {500, 500}, 200);
-    constructHealthBar({96.f, 10.f}, {position.x, position.y-30.f});
+    healthBarBG.setPosition({position.x, position.y-30.f});
+    healthBarFG.setPosition({position.x, position.y-30.f});
+    healthBarFG.setFillColor(sf::Color(0,255,0));
 
     entity.setPosition(position);
-    setHealthBarColor(sf::Color(0,255,0));
 
-    setHitBox(position.x, position.x + 128, position.y, position.y + 107);
+    xLeft = position.x;
+    xRight = position.x + entity.getSize().x;
+    yTop = position.y;
+    yBottom = position.y + entity.getSize().y;
 
     entity.setTexture(&enemyTexture);
+}
 
+void Enemy::updateHealthBar() {
+    healthBarFG.setSize(sf::Vector2f(healthBarBG.getSize().x * (static_cast<float>(hp)/100), healthBarFG.getSize().y));
+    
+}
+
+void Enemy::takeDamage(int damage) {
+    hp-=damage;
+
+    if(hp <= 0){
+        hp = 0;
+
+        if (deathSound){
+            deathSound->play();
+            em.killEntity(*this);
+        }
+    }
+
+    updateHealthBar();
+}
+
+void Enemy::heal(int factor) {
+    if (factor < 0) {
+        hp = maxhp;
+    }else {
+        hp+=factor;
+    }
+
+    updateHealthBar();
+}
+
+int Enemy::getHealth(){
+    return hp;
+}
+
+bool Enemy::hit(int target_x, int target_y){
+    if (hp == 0) {return false;};
+
+    bool hit = target_x > xLeft && target_x < xRight && target_y > yTop && target_y < yBottom;
+
+    if (hitSound && hp > 0 && hit) {
+        hitSound->play();
+    }
+    return hit;
 }
 
 void Enemy::draw(sf::RenderWindow& window){
-    if (getHealth() == 0){return;}
+    if (hp == 0){return;}
 
     window.draw(entity);
-
-    auto healthBar = getHealthBar();
-    window.draw(*healthBar[0]);
-    window.draw(*healthBar[1]);
+    window.draw(healthBarBG);
+    window.draw(healthBarFG);
 }
 
 

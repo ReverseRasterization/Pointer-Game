@@ -7,7 +7,6 @@
 #include <memory>
 #include <vector>
 #include "enemy.h"
-#include "entity.h"
 #include "../playerstats.h"
 #include "../entitymanager.h"
 
