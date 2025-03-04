@@ -1,30 +1,29 @@
 #include "entity.h"
+#include "../entitymanager.h"
 #include <SFML/Audio.hpp>
 #include <vector>
 #include <memory>
 #include <iostream>
 
-Entity::Entity(int hp, int max_hp, bool show_health_bar, std::string death_sound_directory, std::string hit_sound_directory): hp(hp), maxhp(max_hp), showHealthBar(show_health_bar) {
+
+
+Entity::Entity(int hp, int max_hp, bool show_health_bar, std::string death_sound_directory, std::string hit_sound_directory, EntityManager& em): hp(hp), maxhp(max_hp), showHealthBar(show_health_bar), em(em) {
     if(!death_sound_directory.empty()){
-        if(!deathSound_buffer.loadFromFile(death_sound_directory)) {
+        if(!deathSound_buffer->loadFromFile(death_sound_directory)) {
             std::cerr << "Failed to load death sound";
             return;
         }
 
-        sf::Sound nDeathSound(deathSound_buffer);
-
-        deathSound = std::make_shared<sf::Sound>(nDeathSound);
+        deathSound = std::make_shared<sf::Sound>(*deathSound_buffer);
     }
 
     if(!hit_sound_directory.empty()){
-        if(!hitSound_buffer.loadFromFile(hit_sound_directory)) {
+        if(!hitSound_buffer->loadFromFile(hit_sound_directory)) {
             std::cerr << "Failed to load hit sound";
             return;
         }
 
-        sf::Sound nHitSound(hitSound_buffer);
-
-        hitSound = std::make_shared<sf::Sound>(nHitSound);
+        hitSound = std::make_shared<sf::Sound>(*hitSound_buffer);
     }
 }
 
@@ -57,6 +56,7 @@ void Entity::takeDamage(int damage) {
 
         if (deathSound){
             deathSound->play();
+            em.killEntity(*this);
         }
     }
 
@@ -115,7 +115,6 @@ bool Entity::hit(int target_x, int target_y){
     bool hit = target_x > xLeft && target_x < xRight && target_y > yTop && target_y < yBottom;
 
     if (hitSound && getHealth() > 0 && hit) {
-        std::cout << "\nPlaying hit sound!";
         hitSound->play();
     }
     return hit;

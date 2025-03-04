@@ -9,6 +9,7 @@
 #include "enemy.h"
 #include "entity.h"
 #include "../playerstats.h"
+#include "../entitymanager.h"
 
 class Player
 {
@@ -28,7 +29,8 @@ class Player
         };
 
         std::vector<std::shared_ptr<Bullet>> active_bullets;
-        std::vector<std::shared_ptr<Entity>>& entityList; 
+
+        EntityManager& em;
 
         PlayerStats& playerStats;
         
@@ -38,7 +40,7 @@ class Player
         int bulletsHit = 0;
 
     public:
-        Player(PlayerStats& playerStats, std::vector<std::shared_ptr<Entity>>& entity_list);
+        Player(PlayerStats& playerStats, EntityManager& em);
 
         void pointTo(sf::Vector2f point);
         void adjust(sf::Vector2f nSize);

@@ -3,6 +3,7 @@
 #include "Entities/entity.h"
 #include "Entities/enemy.h"
 #include "Entities/player.h"
+#include "entitymanager.h"
 #include "playerstats.h"
 #include <iostream>
 #include <memory>
@@ -12,6 +13,11 @@
 #include <vector>
 #include <chrono>
 
+void summonEnemy(sf::Texture& enemyTexture, EntityManager& em, int maxEnemies=5) {
+    if (em.getEntityCount() == maxEnemies) {return;};
+
+    em.registerEntity(std::make_shared<Enemy>(Enemy(enemyTexture, sf::Vector2i(10, 850), sf::Vector2i(100, 800), em)));
+}
 
 int main()
 {
@@ -49,14 +55,14 @@ int main()
 
     PlayerStats playerStats = PlayerStats(font, static_cast<sf::Vector2f>(window.getSize()));
 
-    // Make Triangle
-    std::vector<std::shared_ptr<Entity>> entities;
+    // Make entity manager
+    EntityManager em = EntityManager();
 
-    Player pointer = Player(playerStats, entities);
+    // Make Triangle
+    Player pointer = Player(playerStats, em);
 
     // Make enemy
-    Enemy nEnemy = Enemy(enemyTexture, sf::Vector2i(50, 850), sf::Vector2i(100, 900)); 
-    entities.push_back(std::make_shared<Enemy>(nEnemy));
+    summonEnemy(enemyTexture, em);
 
     sf::Clock clock;
 
@@ -95,7 +101,7 @@ int main()
 
             if(event->is<sf::Event::KeyPressed>()){
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)){
-                    entities.push_back(std::make_shared<Enemy>(enemyTexture, sf::Vector2i(50, 850), sf::Vector2i(100, 900)));
+                    summonEnemy(enemyTexture, em);
                 }
             }
         }
@@ -109,13 +115,8 @@ int main()
 
         window.clear();
 
-        for (const auto& entity : entities){
-            if (entity) {
-                entity->draw(window);
-            }
-        }
         
-        //enemy->draw(window);
+        em.drawEntities(window);
         pointer.draw(window, dt);
         window.draw(xhair);
         playerStats.draw(window);

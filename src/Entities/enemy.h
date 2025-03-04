@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "entity.h"
+#include "../entitymanager.h"
 
 class Enemy: public Entity
 {
@@ -16,12 +17,9 @@ class Enemy: public Entity
 
         
     public:
-        Enemy(sf::Texture& enemyTexture, sf::Vector2i x_bounds, sf::Vector2i y_bounds);
+        Enemy(sf::Texture& enemyTexture, sf::Vector2i x_bounds, sf::Vector2i y_bounds, EntityManager& em);
 
         void draw(sf::RenderWindow& window) override;
-
-        
-        void kill();
 };
 
 #endif

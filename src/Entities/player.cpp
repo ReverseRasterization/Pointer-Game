@@ -5,8 +5,9 @@
 #include "player.h"
 #include "enemy.h"
 #include "../playerstats.h"
+#include "../entitymanager.h"
 
-Player::Player(PlayerStats& player_stats, std::vector<std::shared_ptr<Entity>>& entity_list): playerStats(player_stats), entityList(entity_list) {
+Player::Player(PlayerStats& player_stats, EntityManager& em): playerStats(player_stats), em(em) {
     pointer.setPointCount(3);
     pointer.setPoint(0, {0, -25}); // This is the tip
     pointer.setPoint(1, {25, 25});
@@ -42,6 +43,9 @@ void Player::draw(sf::RenderWindow& window, float deltaTime){
     // Draw the actual triangle
     window.draw(pointer);
 
+    // Get the entities
+    std::vector<std::shared_ptr<Entity>> entityList = em.getEntities();
+
     // Draw all the bullets
     for (auto it = active_bullets.begin(); it != active_bullets.end();){
         // Determine its new position
@@ -51,8 +55,6 @@ void Player::draw(sf::RenderWindow& window, float deltaTime){
         float newY = bulletptr->bullet.getPosition().y + (bulletptr->direction.y * bulletptr->speed * deltaTime);
 
         bulletptr->bullet.setPosition(sf::Vector2f(newX, newY));
-
-        window.draw(bulletptr->bullet);
 
         // Check if it hit any enemies
         bool hit = false;

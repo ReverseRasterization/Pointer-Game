@@ -1,4 +1,6 @@
 #include "enemy.h"
+#include "entity.h"
+#include "../entitymanager.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <iostream>
@@ -25,7 +27,7 @@ sf::Vector2f choosePosition(int x_min, int x_max, int y_min, int y_max, sf::Vect
     return position;
 }
 
-Enemy::Enemy(sf::Texture& enemyTexture, sf::Vector2i x_bounds, sf::Vector2i y_bounds): Entity(100, 100, true, "assets/Sounds/enemydied.wav", "assets/Sounds/hit.wav")
+Enemy::Enemy(sf::Texture& enemyTexture, sf::Vector2i x_bounds, sf::Vector2i y_bounds, EntityManager& em): Entity(100, 100, true, "assets/Sounds/enemydied.wav", "assets/Sounds/hit.wav", em)
 {
     
     sf::Vector2f position = choosePosition(x_bounds.x, x_bounds.y, y_bounds.x, y_bounds.y, {500, 500}, 200);

@@ -8,6 +8,8 @@
 #include <vector>
 #include <memory>
 
+#include "../entitymanager.h"
+
 // CLASS NOTES:
 //      THE HEALTH BAR MUST BE MANUALLY CONSTRUCTED IN THE ENTITIES CONSTRUCTOR FUNCTION
 //      THE DEATH OF AN ENTITY SHOULD BE HANDLED BY THE ENTITY ITSELF
@@ -27,16 +29,16 @@ class Entity {
         std::shared_ptr<sf::RectangleShape> healthBarFG;
 
         std::shared_ptr<sf::Sound> deathSound;
-        sf::SoundBuffer deathSound_buffer;
+        std::shared_ptr<sf::SoundBuffer> deathSound_buffer = std::make_shared<sf::SoundBuffer>();
 
         std::shared_ptr<sf::Sound> hitSound;
-        sf::SoundBuffer hitSound_buffer;
+        std::shared_ptr<sf::SoundBuffer> hitSound_buffer = std::make_shared<sf::SoundBuffer>();
+
+        EntityManager& em;
 
         bool showHealthBar = true;
 
     public:
-        std::string id;
-
         void setHitBox(int x_left, int x_right, int y_top, int y_bottom);
         std::vector<int> getHitBox(); // x left, x right, y top, y bottom
 
@@ -53,8 +55,9 @@ class Entity {
         std::vector<std::shared_ptr<sf::RectangleShape>> getHealthBar();
 
         bool hit (int target_x, int target_y);
+        void kill();
 
-        virtual void draw(sf::RenderWindow& window) = 0;
+        virtual void draw(sf::RenderWindow& window);
 
-        Entity(int hp, int max_hp, bool show_health_bar, std::string death_sound_directory, std::string hit_sound_directory);
+        Entity(int hp, int max_hp, bool show_health_bar, std::string death_sound_directory, std::string hit_sound_directory, EntityManager& em);
 };
