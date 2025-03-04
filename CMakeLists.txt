@@ -16,7 +16,7 @@ FetchContent_Declare(SFML
 
 FetchContent_MakeAvailable(SFML)
 
-add_executable(src/main.cpp src/Entities/enemy.cpp src/Entities/player.cpp src/playerstats.cpp src/entitymanager.cpp)
+add_executable(pointer src/main.cpp src/Entities/enemy.cpp src/Entities/player.cpp src/playerstats.cpp src/entitymanager.cpp)
 
 add_custom_command(TARGET pointer POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
