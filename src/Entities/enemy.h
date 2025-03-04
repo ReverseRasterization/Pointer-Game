@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
 #include <iostream>
 
 #include "entity.h"

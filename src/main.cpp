@@ -55,8 +55,8 @@ int main()
     Player pointer = Player(playerStats, entities);
 
     // Make enemy
-    Enemy nEnemy = Enemy(enemyTexture, sf::Vector2i(50, 850), sf::Vector2i(100, 900));
-    //entities.push_back(enemy);
+    Enemy nEnemy = Enemy(enemyTexture, sf::Vector2i(50, 850), sf::Vector2i(100, 900)); 
+    entities.push_back(std::make_shared<Enemy>(nEnemy));
 
     sf::Clock clock;
 
@@ -95,7 +95,7 @@ int main()
 
             if(event->is<sf::Event::KeyPressed>()){
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)){
-                    entities.push_back(std::make_shared<Enemy>(enemyTexture));
+                    entities.push_back(std::make_shared<Enemy>(enemyTexture, sf::Vector2i(50, 850), sf::Vector2i(100, 900)));
                 }
             }
         }
