@@ -14,7 +14,6 @@
 
 void summonEnemy(sf::Texture& enemyTexture, EntityManager& em, int maxEnemies=5) {
     if (em.getEntityCount() == maxEnemies) {return;};
-
     em.registerEntity(std::make_shared<Enemy>(Enemy(enemyTexture, sf::Vector2i(10, 850), sf::Vector2i(100, 800), "assets/Sounds/enemydied.wav", "assets/Sounds/hit.wav", em)));
 }
 

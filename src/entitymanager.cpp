@@ -35,3 +35,5 @@ void EntityManager::drawEntities(sf::RenderWindow& window) {
         }
     }
 }
+
+EntityManager::EntityManager(){}

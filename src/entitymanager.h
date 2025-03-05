@@ -4,11 +4,9 @@
 #include <vector>
 #include <memory>
 
-#include "Entities/enemy.h"
-
 #include <SFML/Graphics.hpp>
 
-
+class Enemy;
 
 class EntityManager {
     private:
@@ -24,4 +22,6 @@ class EntityManager {
         int getEntityCount();
 
         void drawEntities(sf::RenderWindow& window);
+
+        EntityManager();
 };
