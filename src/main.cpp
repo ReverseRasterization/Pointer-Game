@@ -37,7 +37,12 @@ int main()
 
     // Make window
 
-    sf::RenderWindow window(sf::VideoMode({1000,1000}), "Mouse Pointer");
+    sf::Vector2u userDesktopSize = sf::VideoMode::getDesktopMode().size;
+
+    unsigned int resolution = ((userDesktopSize.x > userDesktopSize.y) ? userDesktopSize.y : userDesktopSize.x) * .75;
+
+    sf::RenderWindow window(sf::VideoMode({resolution,resolution}), "Mouse Pointer");
+    window.setPosition({(userDesktopSize.x/2)-(resolution/2), (userDesktopSize.y/2)-(resolution/2)});
     window.setMouseCursorVisible(false);
 
     // Make score & accuracy counter
@@ -46,15 +51,14 @@ int main()
 
     // Make entity manager
     EntityManager em = EntityManager("assets/Textures/enemy.png", "assets/Sounds/enemydied.wav", playerStats);
-    em.setEnemySpawnBoundaries(10, 850, 100, 800);
+    em.setEnemySpawnBoundaries(10, resolution-150, 100, resolution-200);
 
     // Make Triangle
 
-
-    Player pointer = Player(playerStats, em, {0, 1000, 0, 1000});
+    Player pointer = Player(playerStats, em, {10, resolution-150, 100, resolution-200});
 
     // Make enemy
-    em.spawnEnemy(500, "assets/Sounds/hit.wav");
+    em.spawnEnemy(100, "assets/Sounds/hit.wav");
 
     sf::Clock clock;
 
@@ -74,7 +78,7 @@ int main()
 
                 sf::Vector2f nSize = static_cast<sf::Vector2f>(window.getSize());
 
-                pointer.adjust({0, nSize.x, 0, nSize.y});
+                pointer.adjust({0, static_cast<unsigned int>(nSize.x), 0,static_cast<unsigned int>(nSize.y)});
                 playerStats.adjustToWindowSize(nSize);
                 em.setEnemySpawnBoundaries(10, nSize.x-150, 100, nSize.y-200);
                 

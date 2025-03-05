@@ -22,6 +22,7 @@ class EntityManager {
         std::shared_ptr<sf::SoundBuffer> deathSound_buffer = std::make_shared<sf::SoundBuffer>();
 
         std::vector<int> enemyBounds; // x_min, x_max, y_min, y_max
+        sf::Vector2f playerPos;
 
         int maxEnemies = 100000000;
 
@@ -37,6 +38,8 @@ class EntityManager {
 
         void setMaxEnemies(int max_enemies);
         void setEnemySpawnBoundaries(int x_min, int x_max, int y_min, int y_max);
+
+        sf::Vector2f getPlayerPos();
 
         void drawEntities(sf::RenderWindow& window);
 

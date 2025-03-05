@@ -23,7 +23,7 @@ sf::Vector2f adjustSizeToAspectRatio_p(sf::Vector2f size, float target_aspect_ra
     return size;
 }
 
-Player::Player(PlayerStats& player_stats, EntityManager& em, std::vector<float> playing_bounds): playerStats(player_stats), em(em) {
+Player::Player(PlayerStats& player_stats, EntityManager& em, std::vector<unsigned int> playing_bounds): playerStats(player_stats), em(em) {
     pointer.setPointCount(3);
     pointer.setFillColor(sf::Color::Green);
     adjust(playing_bounds);
@@ -47,7 +47,7 @@ void Player::pointTo(sf::Vector2f point)
     pointer.setRotation(sf::degrees((atan2(dY, dX)) * (180.0f / 3.14159265359f)+90));
 }
 
-void Player::adjust(std::vector<float> playing_bounds){
+void Player::adjust(std::vector<unsigned int> playing_bounds){
 
     sf::Vector2f center = {(playing_bounds[0] + playing_bounds[1]) / 2.f, (playing_bounds[2] + playing_bounds[3]) / 2.f};
     sf::Vector2f size = {playing_bounds[1]-playing_bounds[0], playing_bounds[3]-playing_bounds[2]};

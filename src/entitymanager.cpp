@@ -55,6 +55,8 @@ void EntityManager::setEnemySpawnBoundaries(int x_min, int x_max, int y_min, int
             entity->updateToField({x_max-x_min, y_max-y_min});
         }
     }
+
+    playerPos = {(x_max + x_min)/2, (y_max+y_min)/2};
 }
 
 void EntityManager::drawEntities(sf::RenderWindow& window) {
@@ -63,6 +65,10 @@ void EntityManager::drawEntities(sf::RenderWindow& window) {
             entity->draw(window);
         }
     }
+}
+
+sf::Vector2f EntityManager::getPlayerPos() {
+    return playerPos;
 }
 
 EntityManager::EntityManager(std::string enemy_texture_directory, std::string death_sound_directory, PlayerStats& player_stats): playerStats(player_stats) {

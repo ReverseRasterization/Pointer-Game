@@ -39,10 +39,10 @@ class Player
         int bulletsHit = 0;
 
     public:
-        Player(PlayerStats& playerStats, EntityManager& em, std::vector<float> playing_bounds);
+        Player(PlayerStats& playerStats, EntityManager& em, std::vector<unsigned int> playing_bounds);
 
         void pointTo(sf::Vector2f point);
-        void adjust(std::vector<float> playing_bounds);
+        void adjust(std::vector<unsigned int> playing_bounds);
         void draw(sf::RenderWindow& window, float deltaTime);
 
         void fireBullet(sf::Vector2i target);

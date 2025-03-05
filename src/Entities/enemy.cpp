@@ -33,7 +33,7 @@ sf::Vector2f adjustSizeToAspectRatio(sf::Vector2f size, float target_aspect_rati
 sf::Vector2f choosePosition(int x_min, int x_max, int y_min, int y_max, sf::Vector2f playerPosition, int distance_from_player) {
     sf::Vector2f position(500, 500);
 
-    while (getDistance(500, position.x, 500, position.y) < distance_from_player)
+    while (getDistance(playerPosition.x, position.x, playerPosition.y, position.y) < distance_from_player)
     {
         position = sf::Vector2f(x_min + rand()%x_max, y_min + rand()%y_max);
     }
@@ -55,7 +55,7 @@ Enemy::Enemy(int health, sf::Texture& enemyTexture, sf::Vector2i x_bounds, sf::V
     float boundWidth = x_bounds.y - x_bounds.x;
     float boundHeight = y_bounds.y - y_bounds.x;
 
-    sf::Vector2f position = choosePosition(x_bounds.x, x_bounds.y, y_bounds.x, y_bounds.y, {500, 500}, 200);
+    sf::Vector2f position = choosePosition(x_bounds.x, x_bounds.y, y_bounds.x, y_bounds.y, em.getPlayerPos(), 500);
     enemyScalingData.positionScale = {position.x/boundWidth, position.y/boundHeight};
     entity.setPosition(position);
 

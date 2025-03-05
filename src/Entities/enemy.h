@@ -19,7 +19,7 @@ class Enemy
         const float DISPLAY_ASPECT_RATIO = 1.2;
 
         struct EnemyScalingData {
-            sf::Vector2f sizeScale = {.136, .120}; //96x80 in a 1000x1000 screen
+            sf::Vector2f sizeScale = {.106, .90}; //96x80 in a 1000x1000 screen
             sf::Vector2f positionScale;
         };
 
