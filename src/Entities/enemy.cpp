@@ -31,11 +31,12 @@ sf::Vector2f adjustSizeToAspectRatio(sf::Vector2f size, float target_aspect_rati
 }
 
 sf::Vector2f choosePosition(int x_min, int x_max, int y_min, int y_max, sf::Vector2f playerPosition, int distance_from_player) {
-    sf::Vector2f position(500, 500);
+    sf::Vector2f position(x_min + rand()%x_max, y_min + rand()%y_max);
 
     while (getDistance(playerPosition.x, position.x, playerPosition.y, position.y) < distance_from_player)
     {
         position = sf::Vector2f(x_min + rand()%x_max, y_min + rand()%y_max);
+        std::cout << "\nPosition: (" << position.x << ", " << position.y << ')';
     }
 
     return position;
@@ -55,8 +56,10 @@ Enemy::Enemy(int health, sf::Texture& enemyTexture, sf::Vector2i x_bounds, sf::V
     float boundWidth = x_bounds.y - x_bounds.x;
     float boundHeight = y_bounds.y - y_bounds.x;
 
-    sf::Vector2f position = choosePosition(x_bounds.x, x_bounds.y, y_bounds.x, y_bounds.y, em.getPlayerPos(), 500);
+    sf::Vector2f position = choosePosition(x_bounds.x, x_bounds.y, y_bounds.x, y_bounds.y, em.getPlayerPos(), 100);
     enemyScalingData.positionScale = {position.x/boundWidth, position.y/boundHeight};
+
+    entity.setOrigin({entity.getSize().x/2,entity.getSize().y/2});
     entity.setPosition(position);
 
     updateToField({x_bounds.y-x_bounds.x, y_bounds.y - y_bounds.x});
@@ -100,7 +103,7 @@ bool Enemy::hit(int target_x, int target_y){
     sf::Vector2f position = entity.getPosition();
     sf::Vector2f size = entity.getSize();
 
-    bool hit = target_x > position.x && target_x < position.x + size.x && target_y > position.y && target_y < position.y + size.y;
+    bool hit = target_x > position.x-(size.x/2) && target_x < position.x + (size.x/2) && target_y > position.y-(size.y/2) && target_y < position.y + (size.y/2);
 
     if (hitSound && hp > 0 && hit) {
         hitSound->play();
@@ -118,13 +121,13 @@ void Enemy::updateToField(sf::Vector2i nSize) {
     entity.setSize(enemy_size);
 
     sf::Vector2f enemy_position = {boundWidth * enemyScalingData.positionScale.x, boundHeight * enemyScalingData.positionScale.y};
-
+    entity.setOrigin({entity.getSize().x/2,entity.getSize().y/2});
     entity.setPosition(enemy_position);
 
-    healthBarBG.setSize({enemy_size.x, nSize.y*.0125f});
+    healthBarBG.setSize({enemy_size.x, nSize.y*.0175f});
     updateHealthBar();
-    healthBarBG.setPosition({enemy_position.x, enemy_position.y-(enemy_size.y* .20f)});
-    healthBarFG.setPosition({enemy_position.x, enemy_position.y-(enemy_size.y* .20f)});
+    healthBarBG.setPosition({enemy_position.x-(entity.getSize().x/2), enemy_position.y-(enemy_size.y* .75f)});
+    healthBarFG.setPosition({enemy_position.x-(entity.getSize().x/2), enemy_position.y-(enemy_size.y* .75f)});
 }
 
 void Enemy::draw(sf::RenderWindow& window){

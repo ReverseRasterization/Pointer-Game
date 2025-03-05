@@ -78,7 +78,7 @@ int main()
 
                 sf::Vector2f nSize = static_cast<sf::Vector2f>(window.getSize());
 
-                pointer.adjust({0, static_cast<unsigned int>(nSize.x), 0,static_cast<unsigned int>(nSize.y)});
+                pointer.adjust({10, static_cast<unsigned int>(nSize.x-150), 100, static_cast<unsigned int>(nSize.y-200)});
                 playerStats.adjustToWindowSize(nSize);
                 em.setEnemySpawnBoundaries(10, nSize.x-150, 100, nSize.y-200);
                 
