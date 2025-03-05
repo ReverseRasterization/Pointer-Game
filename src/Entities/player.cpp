@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <cmath>
@@ -7,14 +8,25 @@
 #include "../playerstats.h"
 #include "../entitymanager.h"
 
-Player::Player(PlayerStats& player_stats, EntityManager& em): playerStats(player_stats), em(em) {
+sf::Vector2f adjustSizeToAspectRatio_p(sf::Vector2f size, float target_aspect_ratio) {
+    float originalAspectRatio = size.x/size.y;
+
+    if (originalAspectRatio > target_aspect_ratio) { // the width is too large
+        size.x = size.y * target_aspect_ratio;
+        originalAspectRatio = size.x/size.y;
+    }
+    
+    if (originalAspectRatio < target_aspect_ratio) { // the height is too large
+        size.y = size.x * (80.f/96.f);
+    }
+
+    return size;
+}
+
+Player::Player(PlayerStats& player_stats, EntityManager& em, std::vector<float> playing_bounds): playerStats(player_stats), em(em) {
     pointer.setPointCount(3);
-    pointer.setPoint(0, {0, -25}); // This is the tip
-    pointer.setPoint(1, {25, 25});
-    pointer.setPoint(2, {-25, 25});
     pointer.setFillColor(sf::Color::Green);
-    pointer.setOrigin({0,0});
-    pointer.setPosition({500, 500});
+    adjust(playing_bounds);
 
     if(!gunshot_buffer.loadFromFile("assets/Sounds/gunshot.wav")) {
         std::cerr << "Failed to load gunshot sound";
@@ -35,8 +47,18 @@ void Player::pointTo(sf::Vector2f point)
     pointer.setRotation(sf::degrees((atan2(dY, dX)) * (180.0f / 3.14159265359f)+90));
 }
 
-void Player::adjust(sf::Vector2f nSize){
-    pointer.setPosition(nSize/2.f);
+void Player::adjust(std::vector<float> playing_bounds){
+
+    sf::Vector2f center = {(playing_bounds[0] + playing_bounds[1]) / 2.f, (playing_bounds[2] + playing_bounds[3]) / 2.f};
+    sf::Vector2f size = {playing_bounds[1]-playing_bounds[0], playing_bounds[3]-playing_bounds[2]};
+    pointer.setOrigin({0,0});
+    pointer.setPosition(center);
+
+    float sizeFactor = adjustSizeToAspectRatio_p({size.x*.025f, size.y*.025f}, 1).x;
+
+    pointer.setPoint(0, {0, -sizeFactor}); // This is the tip
+    pointer.setPoint(1, {sizeFactor, sizeFactor});
+    pointer.setPoint(2, {-sizeFactor, sizeFactor});
 }
 
 void Player::draw(sf::RenderWindow& window, float deltaTime){

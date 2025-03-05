@@ -1,21 +1,16 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+
 #include "Entities/enemy.h"
 #include "Entities/player.h"
 #include "entitymanager.h"
 #include "playerstats.h"
+
 #include <iostream>
 #include <memory>
 #include <ctime>
-#include <cstdlib>
-#include <cmath>
 #include <vector>
 #include <chrono>
-
-void summonEnemy(sf::Texture& enemyTexture, EntityManager& em, int maxEnemies=5) {
-    if (em.getEntityCount() == maxEnemies) {return;};
-    em.registerEntity(std::make_shared<Enemy>(Enemy(enemyTexture, sf::Vector2i(10, 850), sf::Vector2i(100, 800), "assets/Sounds/enemydied.wav", "assets/Sounds/hit.wav", em)));
-}
 
 int main()
 {
@@ -24,12 +19,8 @@ int main()
     // Load & apply textures
 
     sf::Texture xhairTexture;
-    sf::Texture enemyTexture;
 
     if(!xhairTexture.loadFromFile("assets/Textures/xhair.png")){
-        return -1;
-    }
-    if (!enemyTexture.loadFromFile("assets/Textures/enemy.png")){
         return -1;
     }
 
@@ -54,13 +45,16 @@ int main()
     PlayerStats playerStats = PlayerStats(font, static_cast<sf::Vector2f>(window.getSize()));
 
     // Make entity manager
-    EntityManager em = EntityManager();
+    EntityManager em = EntityManager("assets/Textures/enemy.png", "assets/Sounds/enemydied.wav", playerStats);
+    em.setEnemySpawnBoundaries(10, 850, 100, 800);
 
     // Make Triangle
-    Player pointer = Player(playerStats, em);
+
+
+    Player pointer = Player(playerStats, em, {0, 1000, 0, 1000});
 
     // Make enemy
-    summonEnemy(enemyTexture, em);
+    em.spawnEnemy(500, "assets/Sounds/hit.wav");
 
     sf::Clock clock;
 
@@ -80,8 +74,9 @@ int main()
 
                 sf::Vector2f nSize = static_cast<sf::Vector2f>(window.getSize());
 
-                pointer.adjust(nSize);
+                pointer.adjust({0, nSize.x, 0, nSize.y});
                 playerStats.adjustToWindowSize(nSize);
+                em.setEnemySpawnBoundaries(10, nSize.x-150, 100, nSize.y-200);
                 
                 window.setView(sf::View(sf::FloatRect({0.f, 0.f}, nSize)));
             }
@@ -99,7 +94,7 @@ int main()
 
             if(event->is<sf::Event::KeyPressed>()){
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)){
-                    summonEnemy(enemyTexture, em);
+                    em.spawnEnemy(100, "assets/Sounds/hit.wav");
                 }
             }
         }
@@ -113,7 +108,6 @@ int main()
 
         window.clear();
 
-        
         em.drawEntities(window);
         pointer.draw(window, dt);
         window.draw(xhair);

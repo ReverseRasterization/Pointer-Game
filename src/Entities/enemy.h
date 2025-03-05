@@ -16,17 +16,18 @@ class Enemy
         int hp;
         int maxhp;
 
-        int yTop;
-        int yBottom;
-        int xLeft;
-        int xRight;
+        const float DISPLAY_ASPECT_RATIO = 1.2;
+
+        struct EnemyScalingData {
+            sf::Vector2f sizeScale = {.136, .120}; //96x80 in a 1000x1000 screen
+            sf::Vector2f positionScale;
+        };
+
+        EnemyScalingData enemyScalingData;
 
         sf::RectangleShape entity = sf::RectangleShape({96.f, 80.f});
         sf::RectangleShape healthBarBG = sf::RectangleShape({96.f, 10.f});
         sf::RectangleShape healthBarFG = sf::RectangleShape({96.f, 10.f});
-
-        std::shared_ptr<sf::Sound> deathSound;
-        std::shared_ptr<sf::SoundBuffer> deathSound_buffer = std::make_shared<sf::SoundBuffer>();
 
         std::shared_ptr<sf::Sound> hitSound;
         std::shared_ptr<sf::SoundBuffer> hitSound_buffer = std::make_shared<sf::SoundBuffer>();
@@ -36,11 +37,13 @@ class Enemy
         void updateHealthBar();
 
     public:
-        Enemy(sf::Texture& enemyTexture, sf::Vector2i x_bounds, sf::Vector2i y_bounds, std::string death_sound_directory, std::string hit_sound_directory, EntityManager& em);
+        Enemy(int health, sf::Texture& enemyTexture, sf::Vector2i x_bounds, sf::Vector2i y_bounds, std::string hit_sound_directory, EntityManager& em);
 
         void takeDamage(int damage);
         void heal(int factor); // if the factor is <0, that means the entities health will be fully replenished
         int getHealth();
+
+        void updateToField(sf::Vector2i nSize);
 
         bool hit (int target_x, int target_y);
 
