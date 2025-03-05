@@ -42,7 +42,7 @@ int main()
     unsigned int resolution = ((userDesktopSize.x > userDesktopSize.y) ? userDesktopSize.y : userDesktopSize.x) * .75;
 
     sf::RenderWindow window(sf::VideoMode({resolution,resolution}), "Mouse Pointer");
-    window.setPosition({(userDesktopSize.x/2)-(resolution/2), (userDesktopSize.y/2)-(resolution/2)});
+    window.setPosition({static_cast<int>((userDesktopSize.x/2)-(resolution/2)), static_cast<int>((userDesktopSize.y/2)-(resolution/2))});
     window.setMouseCursorVisible(false);
 
     // Make score & accuracy counter
