@@ -124,7 +124,7 @@ void Enemy::updateToField(sf::Vector2i nSize) {
     entity.setOrigin({entity.getSize().x/2,entity.getSize().y/2});
     entity.setPosition(enemy_position);
 
-    healthBarBG.setSize({enemy_size.x, nSize.y*.0175f});
+    healthBarBG.setSize({enemy_size.x, nSize.y*.01f});
     updateHealthBar();
     healthBarBG.setPosition({enemy_position.x-(entity.getSize().x/2), enemy_position.y-(enemy_size.y* .75f)});
     healthBarFG.setPosition({enemy_position.x-(entity.getSize().x/2), enemy_position.y-(enemy_size.y* .75f)});
